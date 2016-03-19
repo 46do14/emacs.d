@@ -1,5 +1,6 @@
-(setq-default show-trailing-whitespace t)
-
+;; << glange
+(setq-default show-trailing-whitespace nil)
+;; >> glange
 
 ;;; Whitespace
 

@@ -21,6 +21,9 @@
       org-export-kill-product-buffer-when-displayed t
       org-tags-column 80)
 
+;; -- glange
+(setq org-ellipsis " ▼")
+;; -- glange
 
 ;; Lots of stuff from http://doc.norang.ca/org-mode.html
 

@@ -10,7 +10,13 @@
   :group 'programming
   :options '(js2-mode js-mode))
 
-(defconst preferred-javascript-indent-level 2)
+;;(defconst preferred-javascript-indent-level 2)
+;; >> glange
+;;(custom-set-variables
+;; '(js2-basic-offset 4)
+;; '(js2-bounce-indent-p t)
+;; )
+;; << glange
 
 ;; Need to first remove from list if present, since elpa adds entries too, which
 ;; may be in an arbitrary order
@@ -44,6 +50,7 @@
     (js2-imenu-extras-setup)))
 
 ;; js-mode
+(defvar preferred-javascript-indent-level 2)
 (setq-default js-indent-level preferred-javascript-indent-level)
 
 
