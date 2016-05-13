@@ -88,6 +88,7 @@ typical word processor."
 (setq org-support-shift-select t)
 
 ;;; Capturing
+(setq org-default-notes-file "C:/Users/glange/Polybox/notes/capture/organizer.org")
 
 (global-set-key (kbd "C-c c") 'org-capture)
 

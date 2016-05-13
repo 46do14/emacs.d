@@ -30,7 +30,7 @@
 ;; js2-mode
 
 ;; Change some defaults: customize them to override
-(setq-default js2-basic-offset 2
+(setq-default js2-basic-offset 4
               js2-bounce-indent-p nil)
 (after-load 'js2-mode
   ;; Disable js2 mode's syntax error highlighting by default...
@@ -50,7 +50,7 @@
     (js2-imenu-extras-setup)))
 
 ;; js-mode
-(defvar preferred-javascript-indent-level 2)
+(defvar preferred-javascript-indent-level 4)
 (setq-default js-indent-level preferred-javascript-indent-level)
 
 
@@ -104,5 +104,7 @@
     (add-hook 'skewer-mode-hook
               (lambda () (inferior-js-keys-mode -1)))))
 
+;; cancel   (define-key map [mouse-1] #'js2-mode-show-node)
+(define-key global-map (kbd "<double-mouse-1>") 'mouse-set-point)
 
 (provide 'init-javascript)

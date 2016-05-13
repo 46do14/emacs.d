@@ -1,10 +1,13 @@
 (require-package 'hydra)
 
-(set-register ?i `(file . ,(concat "c:/users/" (getenv"USERNAME") "/Polybox/.notes/index.org")))
+(set-register ?i `(file . ,(concat "c:/users/" (getenv"USERNAME") "/Polybox/notes/index.org")))
+
+(set-face-attribute 'region nil :background "#666" :foreground "#ffffff")
 
 (setq inhibit-start-message t)
 (setq initial-scratch-message nil)
-;(tool-bar-mode 0)
+(scroll-bar-mode -1)
+(tool-bar-mode 0)
 (menu-bar-mode 0)
 (setq tab-width 4)
 
@@ -133,5 +136,33 @@
 ;;>>---bind keys to Ctrl-$
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+
+;; --------------
+;; swap 2 buffers
+;; --------------
+(defun swap-buffers ()
+  (interactive)
+  (let ((curr-buffer (current-buffer)))
+    (other-window 1)
+    (let ((other-buffer (current-buffer)))
+      (switch-to-buffer curr-buffer)
+      (other-window -1)
+      (switch-to-buffer other-buffer))))
+
+
+;; -----------------
+;; dedicatetd window
+;; -----------------
+(defun toggle-current-window-dedication ()
+  (interactive)
+  (let* ((window    (selected-window))
+         (dedicated (window-dedicated-p window)))
+    (set-window-dedicated-p window (not dedicated))
+    (message "Window %sdedicated to %s"
+             (if dedicated "no longer " "")
+             (buffer-name))))
+
+(global-set-key [pause] 'toggle-current-window-dedication)
 
 (provide 'init-local)

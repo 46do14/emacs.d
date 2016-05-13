@@ -1,6 +1,6 @@
-
 ;;; This file bootstraps the configuration, which is divided into
 ;;; a number of other files.
+(require 'cl)
 
 (let ((minver "23.3"))
   (when (version<= emacs-version "23.1")
@@ -53,11 +53,11 @@
 (require-package 'scratch)
 ;;(require-package 'mwe-log-commands)
 
-(require 'init-frame-hooks)
+;;(require 'init-frame-hooks)
 ;;(require 'init-xterm)
 ;;(require 'init-themes)
 ;;(require 'init-osx-keys)
-(require 'init-gui-frames)
+;;(require 'init-gui-frames)
 (require 'init-dired)
 (require 'init-isearch)
 (require 'init-grep)

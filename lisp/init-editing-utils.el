@@ -138,14 +138,24 @@
 ;;----------------------------------------------------------------------------
 ;; Rectangle selections, and overwrite text when the selection is active
 ;;----------------------------------------------------------------------------
-(cua-selection-mode t)                  ; for rectangles, CUA is nice
+;;(cua-selection-mode t)                  ; for rectangles, CUA is nice
+;; << glange
+(cua-mode t)
+(setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
+(transient-mark-mode 1)               ;; No region when it is not highlighted
+(setq cua-keep-region-after-copy nil) ;; non-Standard Windows behaviour
 
 
 ;;----------------------------------------------------------------------------
 ;; Handy key bindings
 ;;----------------------------------------------------------------------------
 ;; To be able to M-x without meta
-(global-set-key (kbd "C-x C-m") 'execute-extended-command)
+;; (global-set-key (kbd "C-x C-m") 'execute-extended-command)
+;; << glange
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-xm"    'execute-extended-command)
+(global-set-key "\C-c\C-m" 'execute-extended-command)
+(global-set-key "\C-cm"    'execute-extended-command)
 
 ;; Vimmy alternatives to M-^ and C-u M-^
 (global-set-key (kbd "C-c j") 'join-line)
@@ -265,28 +275,47 @@
 ;;----------------------------------------------------------------------------
 ;; Cut/copy the current line if no region is active
 ;;----------------------------------------------------------------------------
-(require-package 'whole-line-or-region)
-(whole-line-or-region-mode t)
-(diminish 'whole-line-or-region-mode)
-(make-variable-buffer-local 'whole-line-or-region-mode)
+;; --------------------------------
+;; The code below simply embellishes the normal functions with the
+;; functionality 'if nothing is selected, assume we mean the current
+;; line'. The key bindings stay the same (M-w, C-w).
+;; --------------------------------
+(defadvice kill-ring-save (before slick-copy activate compile)
+  "When called interactively with no active region, copy a single line instead."
+  (interactive (if mark-active (list (region-beginning) (region-end)) (message
+  "Copied line") (list (line-beginning-position) (line-beginning-position
+  2)))))
 
-(defun suspend-mode-during-cua-rect-selection (mode-name)
-  "Add an advice to suspend `MODE-NAME' while selecting a CUA rectangle."
-  (let ((flagvar (intern (format "%s-was-active-before-cua-rectangle" mode-name)))
-        (advice-name (intern (format "suspend-%s" mode-name))))
-    (eval-after-load 'cua-rect
-      `(progn
-         (defvar ,flagvar nil)
-         (make-variable-buffer-local ',flagvar)
-         (defadvice cua--activate-rectangle (after ,advice-name activate)
-           (setq ,flagvar (and (boundp ',mode-name) ,mode-name))
-           (when ,flagvar
-             (,mode-name 0)))
-         (defadvice cua--deactivate-rectangle (after ,advice-name activate)
-           (when ,flagvar
-             (,mode-name 1)))))))
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (list (line-beginning-position)
+        (line-beginning-position 2)))))
 
-(suspend-mode-during-cua-rect-selection 'whole-line-or-region-mode)
+
+;; (require-package 'whole-line-or-region)
+;; (whole-line-or-region-mode t)
+;; (diminish 'whole-line-or-region-mode)
+;; (make-variable-buffer-local 'whole-line-or-region-mode)
+
+;; (defun suspend-mode-during-cua-rect-selection (mode-name)
+;;   "Add an advice to suspend `MODE-NAME' while selecting a CUA rectangle."
+;;   (let ((flagvar (intern (format "%s-was-active-before-cua-rectangle" mode-name)))
+;;         (advice-name (intern (format "suspend-%s" mode-name))))
+;;     (eval-after-load 'cua-rect
+;;       `(progn
+;;          (defvar ,flagvar nil)
+;;          (make-variable-buffer-local ',flagvar)
+;;          (defadvice cua--activate-rectangle (after ,advice-name activate)
+;;            (setq ,flagvar (and (boundp ',mode-name) ,mode-name))
+;;            (when ,flagvar
+;;              (,mode-name 0)))
+;;          (defadvice cua--deactivate-rectangle (after ,advice-name activate)
+;;            (when ,flagvar
+;;              (,mode-name 1)))))))
+
+;; (suspend-mode-during-cua-rect-selection 'whole-line-or-region-mode)
 
 
 

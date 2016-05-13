@@ -1,4 +1,5 @@
 (require-package 'helm)
+(require-package 'helm-ls-git)
 (require 'helm)
 (require 'helm-config)
 (require 'helm-ls-git)

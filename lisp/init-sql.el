@@ -2,6 +2,13 @@
 (after-load 'sql
   (require 'sql-indent))
 
+;; glange
+(eval-after-load "sql"
+  '(progn
+    (sql-set-product 'postgres)
+    )
+  )
+
 (defun sanityinc/pop-to-sqli-buffer ()
   "Switch to the corresponding sqli buffer."
   (interactive)
