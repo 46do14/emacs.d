@@ -59,7 +59,7 @@
 ;;(require 'init-osx-keys)
 ;;(require 'init-gui-frames)
 (require 'init-dired)
-(require 'init-isearch)
+;;(require 'init-isearch)
 (require 'init-grep)
 (require 'init-uniquify)
 (require 'init-ibuffer)
@@ -96,6 +96,9 @@
 (require 'init-nxml)
 (require 'init-html)
 (require 'init-css)
+
+(require 'init-imenu)
+
 ;;(require 'init-haml)
 ;;(require 'init-python-mode)
 ;;(require 'init-haskell)

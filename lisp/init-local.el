@@ -54,8 +54,6 @@
         (list filename)))
 (advice-add 'magit-expand-git-file-name :filter-args #'magit-expand-git-file-name--msys)
 
-
-
 ;; hydra
 ;; (global-set-key
 ;;  (kbd "<f2>")
@@ -93,16 +91,16 @@
 (local-set-key [(control s)] 'isearch-forward-regexp)
 (local-set-key [(control r)] 'isearch-backward-regexp)
 
-;;>>---query-replace-regexp
-(defalias 'qrr 'query-replace-regexp)
-
-
 ;; Always end searches at the beginning of the matching expression.
-(add-hook 'isearch-mode-end-hook 'custom-goto-match-beginning)
+(add-hook 'isearch-mode-end-hook 'my-goto-match-beginning)
+(defun my-goto-match-beginning ()
+  (when (and isearch-forward isearch-other-end)
+    (goto-char isearch-other-end)))
 
-(defun custom-goto-match-beginning ()
-  "Use with isearch hook to end search at first char of match."
-  (when isearch-forward (goto-char isearch-other-end)))
+(defadvice isearch-exit (after my-goto-match-beginning activate)
+  "Go to beginning of match."
+  (when (and isearch-forward isearch-other-end)
+    (goto-char isearch-other-end)))
 
 (defun isearch-occur ()
   "*Invoke `occur' from within isearch."
@@ -125,13 +123,61 @@
     (message "Aborting")))
 ;;<<---recentf dialog
 
+;;>>--- narrow-or-widen-dwim
+;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+;;
+(defun narrow-or-widen-dwim (p)
+  "Widen if buffer is narrowed, narrow-dwim otherwise.
+Dwim means: region, org-src-block, org-subtree, or
+defun, whichever applies first. Narrowing to
+org-src-block actually calls `org-edit-src-code'.
+
+With prefix P, don't widen, just narrow even if buffer
+is already narrowed."
+  (interactive "P")
+  (declare (interactive-only))
+  (cond ((and (buffer-narrowed-p) (not p)) (widen))
+        ((region-active-p)
+         (narrow-to-region (region-beginning)
+                           (region-end)))
+        ((derived-mode-p 'org-mode)
+         ;; `org-edit-src-code' is not a real narrowing
+         ;; command. Remove this first conditional if
+         ;; you don't want it.
+         (cond ((ignore-errors (org-edit-src-code) t)
+                (delete-other-windows))
+               ((ignore-errors (org-narrow-to-block) t))
+               (t (org-narrow-to-subtree))))
+        ((derived-mode-p 'latex-mode)
+         (LaTeX-narrow-to-environment))
+        (t (narrow-to-defun))))
+;;<<--- narrow-or-widen-dwim
+
+
+;;>> swap 2 buffers
+(defun gla/swap-buffers ()
+  (interactive)
+  (let ((curr-buffer (current-buffer)))
+    (other-window 1)
+    (let ((other-buffer (current-buffer)))
+      (switch-to-buffer curr-buffer)
+      (other-window -1)
+      (switch-to-buffer other-buffer))))
+
 ;;>>---bind keys to Ctrl-$
 (define-prefix-command 'gla-bindings-keymap)
-(define-key gla-bindings-keymap (vector ?l) 'helm-locate)
 (define-key gla-bindings-keymap (vector ?b) 'helm-browse-project)
 (define-key gla-bindings-keymap (vector ?c) 'balance-windows)
+(define-key gla-bindings-keymap (vector ?d) 'toggle-debug-on-error)
 (define-key gla-bindings-keymap (vector ?r) 'gla/ido-recentf-open)
-;; >> glange
+(define-key gla-bindings-keymap (vector ?l) 'helm-locate)
+(define-key gla-bindings-keymap (vector ?n) 'narrow-or-widen-dwim)
+(define-key gla-bindings-keymap (vector ?s) 'gla/swap-buffers)
+(define-key gla-bindings-keymap (vector ?.) 'repeat-complex-command)
+(define-key gla-bindings-keymap (vector ?ä) 'query-replace-regexp)
+
+
+; >> glange
 (global-set-key (kbd "C-$") 'gla-bindings-keymap)
 ;;>>---bind keys to Ctrl-$
 

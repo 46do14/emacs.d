@@ -154,8 +154,10 @@
 ;; << glange
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-xm"    'execute-extended-command)
+(global-set-key [(control x )(control return)] 'execute-extended-command)
 (global-set-key "\C-c\C-m" 'execute-extended-command)
 (global-set-key "\C-cm"    'execute-extended-command)
+(global-set-key [(control c )(control return)] 'execute-extended-command)
 
 ;; Vimmy alternatives to M-^ and C-u M-^
 (global-set-key (kbd "C-c j") 'join-line)
