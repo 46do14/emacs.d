@@ -9,6 +9,10 @@
 (define-key global-map (kbd "C-c l") 'org-store-link)
 (define-key global-map (kbd "C-c a") 'org-agenda)
 
+
+(eval-after-load "org"
+  '(require 'ox-md nil t))
+
 ;; Various preferences
 (setq org-log-done t
       org-completion-use-ido t
@@ -300,10 +304,10 @@ typical word processor."
 
 
 
-(require-package 'org-pomodoro)
-(setq org-pomodoro-keep-killed-pomodoro-time t)
-(after-load 'org-agenda
-  (define-key org-agenda-mode-map (kbd "P") 'org-pomodoro))
+;; (require-package 'org-pomodoro)
+;; (setq org-pomodoro-keep-killed-pomodoro-time t)
+;; (after-load 'org-agenda
+;;   (define-key org-agenda-mode-map (kbd "P") 'org-pomodoro))
 
 
 ;; ;; Show iCal calendars in the org agenda
@@ -343,8 +347,6 @@ typical word processor."
      (gnuplot . t)
      (haskell . nil)
      (latex . t)
-     (ledger . t)
-     (ocaml . nil)
      (octave . t)
      (python . t)
      (ruby . t)
@@ -353,5 +355,12 @@ typical word processor."
      (sql . nil)
      (sqlite . t))))
 
+
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (setq org-file-apps
+                   (append '(
+                             ("\\.djvu\\'" . default)
+                             ) org-file-apps ))))
 
 (provide 'init-org)

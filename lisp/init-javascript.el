@@ -10,6 +10,9 @@
   :group 'programming
   :options '(js2-mode js-mode))
 
+
+
+
 ;;(defconst preferred-javascript-indent-level 2)
 ;; >> glange
 ;;(custom-set-variables
@@ -106,5 +109,28 @@
 
 ;; cancel   (define-key map [mouse-1] #'js2-mode-show-node)
 (define-key global-map (kbd "<double-mouse-1>") 'mouse-set-point)
+
+
+;; http://mbork.pl/2016-06-20_Easy_Javascript_logging
+
+(defun js-insert-console-log ()
+  "Insert a console.log statement in the line below.
+If region is active, treat it as the variable to log."
+  (interactive)
+  (let ((variable (if (use-region-p)
+		      (buffer-substring-no-properties (region-beginning)
+						      (region-end))
+		    nil)))
+    (move-end-of-line 1)
+    (newline-and-indent)
+    (if variable
+	(save-excursion
+	  (insert
+	   (format "console.log(\"%s: \" + JSON.stringify(%s, null, '\\t'));"
+		   variable
+		   variable))
+	  (deactivate-mark))
+      (insert "console.log();")
+      (backward-char 2))))
 
 (provide 'init-javascript)
